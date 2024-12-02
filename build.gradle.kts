@@ -1,7 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer
 import net.ltgt.gradle.errorprone.CheckSeverity
 import net.ltgt.gradle.errorprone.errorprone
-import java.net.URI
 
 plugins {
     id("java")
@@ -12,7 +11,7 @@ plugins {
 }
 
 group = "org.builtonaws.secretsanta"
-version = "1.0-SNAPSHOT+02"
+version = "1.0-SNAPSHOT+03"
 
 repositories {
     mavenCentral()
@@ -109,7 +108,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = URI.create("https://maven.pkg.github.com/secret-santa-app/secret-santa-api")
+            url = uri("https://maven.pkg.github.com/secret-santa-app/secret-santa-api")
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")
