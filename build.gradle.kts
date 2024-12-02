@@ -1,16 +1,18 @@
 import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer
 import net.ltgt.gradle.errorprone.CheckSeverity
 import net.ltgt.gradle.errorprone.errorprone
+import java.net.URI
 
 plugins {
     id("java")
     id("net.ltgt.errorprone") version "4.1.0"
     id("com.diffplug.spotless") version "7.0.0.BETA4"
     id("com.gradleup.shadow") version "8.3.5"
+    `maven-publish`
 }
 
 group = "org.builtonaws.secretsanta"
-version = "1.0-SNAPSHOT"
+version = "1.0-SNAPSHOT+01"
 
 repositories {
     mavenCentral()
@@ -51,6 +53,8 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+    withJavadocJar()
+    withSourcesJar()
 }
 tasks.withType<JavaCompile> {
     options.errorprone {
@@ -99,4 +103,57 @@ tasks.shadowJar {
 tasks.build {
     dependsOn(tasks.spotlessApply)
     dependsOn(tasks.shadowJar)
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = URI.create("https://maven.pkg.github.com/secret-santa-app/secret-santa-api")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+    publications {
+        create<MavenPublication>("github") {
+            from(components["shadow"])
+
+            groupId = project.group.toString()
+            artifactId = project.name
+            version = project.version.toString()
+
+            pom {
+                name = "SecretSanta API"
+                description = "SecretSanta Lambda HTTP API"
+                inceptionYear = "2024"
+                packaging = "jar"
+                url = "https://github.com/secret-santa-app/secret-santa-api"
+
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+
+                developers {
+                    developer {
+                        name = "João N. Matos"
+                        email = "me@joaonmatos.com"
+                        timezone = "Europe/Berlin"
+                        url = "https://www.joaonmatos.com/"
+                    }
+                }
+
+                scm {
+                    connection = "scm:git:https://github.com/secret-santa-app/secret-santa-api.git"
+                    developerConnection = "scm:git:ssh://git@github.com:secret-santa-app/secret-santa-api.git"
+                    url = "https://github.com/secret-santa-app/secret-santa-api"
+                }
+            }
+        }
+    }
 }
