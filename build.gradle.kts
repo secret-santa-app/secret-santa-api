@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "org.builtonaws.secretsanta"
-version = "1.0-SNAPSHOT+01"
+version = "1.0-SNAPSHOT+02"
 
 repositories {
     mavenCentral()
